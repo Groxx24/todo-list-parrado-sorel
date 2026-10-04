@@ -1,7 +1,8 @@
 # Our Lists
 
 Shared to-do lists for two people. Built with Compose Multiplatform, Android target only for now.
-Single Gradle module `:app`, package `com.parradosorel.todo`.
+Single Gradle module `:app`, package `com.parradosorel.todo` (the applicationId is
+`como.todo.parradosorel`, the id the Firebase app is registered under).
 
 ## Architecture
 
@@ -36,8 +37,13 @@ resources. Dependencies are wired by hand in `di/AppContainer.kt` and nowhere el
   `ui/icons/ListIcons.kt`.
 - Lists are stored on the phone in Room (`todo.db`, table `lists`) through `data/local/RoomTodoLists`.
   It is the only copy, so schema changes need a migration; the schema is exported to `app/schemas/`.
-- Not shared yet. Sharing means a remote `TodoListRepository` (e.g. Firestore through GitLive, as in
-  top-10-groceries) swapped in `AppContainer`; nothing above the data layer changes.
+- Not shared yet. Sharing means a Firestore `TodoListRepository` swapped in `AppContainer`; nothing
+  above the data layer changes.
+- Firebase is set up but not used by any code yet: the `com.google.gms.google-services` plugin reads
+  `app/google-services.json` (gitignored, so every checkout needs its own copy), and Firestore and
+  Auth come through GitLive's multiplatform SDK (`dev.gitlive:firebase-*`) so the Firebase code can
+  live in `commonMain`. The Firebase BoM in `androidMain` is pinned to the version that GitLive
+  release is built against, which is also why the app targets JVM 17.
 
 ## Build
 

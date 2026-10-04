@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
+    // Reads app/google-services.json (kept out of git) and sets up the default Firebase app.
+    alias(libs.plugins.google.services)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
 }
@@ -13,6 +16,7 @@ kotlin {
     // Android only for now. Shared code lives in commonMain, so an iOS target is a matter of
     // adding it here plus the Xcode shell.
     androidTarget {
+        // 17 because GitLive's Firestore inline functions are built for 17 and cannot be inlined into 11.
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
         }
@@ -31,9 +35,14 @@ kotlin {
             implementation(libs.lifecycle.runtime.compose)
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
+            implementation(libs.kotlinx.serialization.json)
+            // Shares the lists between phones, and signs each person in so the rules can tell them apart.
+            implementation(libs.gitlive.firebase.firestore)
+            implementation(libs.gitlive.firebase.auth)
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
+            implementation(project.dependencies.platform(libs.firebase.bom))
         }
     }
 }
@@ -53,7 +62,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.parradosorel.todo"
+        // The id the Firebase app is registered under; the code itself stays in com.parradosorel.todo.
+        applicationId = "como.todo.parradosorel"
         minSdk = 29
         targetSdk = 36
         versionCode = 1
