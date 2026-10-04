@@ -41,15 +41,15 @@ import com.parradosorel.todo.ui.icons.IconTile
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun ListsRoute(container: AppContainer, onNewList: () -> Unit) {
+fun ListsRoute(container: AppContainer, onNewList: () -> Unit, onOpenList: (listId: String) -> Unit) {
     val viewModel = viewModel { ListsViewModel(container.getLists) }
     val state by viewModel.state.collectAsStateWithLifecycle()
-    ListsScreen(state, onNewList)
+    ListsScreen(state, onNewList, onOpenList)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListsScreen(state: ListsUiState, onNewList: () -> Unit) {
+fun ListsScreen(state: ListsUiState, onNewList: () -> Unit, onOpenList: (listId: String) -> Unit) {
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(Res.string.lists_title)) }) },
         floatingActionButton = {
@@ -73,15 +73,15 @@ fun ListsScreen(state: ListsUiState, onNewList: () -> Unit) {
                 ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                items(state.lists, key = { it.id }) { ListRow(it) }
+                items(state.lists, key = { it.id }) { list -> ListRow(list, onClick = { onOpenList(list.id) }) }
             }
         }
     }
 }
 
 @Composable
-private fun ListRow(list: TodoList) {
-    ElevatedCard(Modifier.fillMaxWidth()) {
+private fun ListRow(list: TodoList, onClick: () -> Unit) {
+    ElevatedCard(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Row(
             Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,

@@ -1,5 +1,6 @@
 package com.parradosorel.todo.data.local
 
+import androidx.room.AutoMigration
 import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
@@ -10,11 +11,22 @@ import kotlinx.coroutines.IO
 
 const val TodoDatabaseFileName = "todo.db"
 
-/** The lists, kept on the phone. Unlike a cache it holds the only copy, so schema changes need a migration. */
-@Database(entities = [TodoListEntity::class], version = 1)
+/**
+ * The lists and their items, kept on the phone. Unlike a cache it holds the only copy, so every
+ * schema change needs a migration; Room writes it from the schemas exported to `app/schemas/`.
+ */
+@Database(
+    entities = [TodoListEntity::class, TodoItemEntity::class],
+    version = 2,
+    autoMigrations = [
+        // Adds the items table.
+        AutoMigration(from = 1, to = 2),
+    ],
+)
 @ConstructedBy(TodoDatabaseConstructor::class)
 abstract class TodoDatabase : RoomDatabase() {
     abstract fun todoListDao(): TodoListDao
+    abstract fun todoItemDao(): TodoItemDao
 }
 
 // Room generates the actual for each platform.

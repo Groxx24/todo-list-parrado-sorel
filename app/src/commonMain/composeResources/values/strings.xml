@@ -10,6 +10,13 @@
     <string name="new_list_save">Save</string>
     <string name="new_list_save_failed">The list could not be saved. Try again.</string>
     <string name="back">Back</string>
+    <string name="list_empty_title">Nothing on this list yet</string>
+    <string name="list_empty_hint">Type the first item below.</string>
+    <string name="list_progress">%1$d of %2$d done</string>
+    <string name="list_action_failed">That did not work. Try again.</string>
+    <string name="item_placeholder">Add an item</string>
+    <string name="item_add">Add item</string>
+    <string name="item_delete">Delete %1$s</string>
     <!-- What each list icon shows, read out by screen readers. -->
     <string name="icon_todo">To do</string>
     <string name="icon_groceries">Groceries</string>

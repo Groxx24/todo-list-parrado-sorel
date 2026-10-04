@@ -20,10 +20,16 @@ resources. Dependencies are wired by hand in `di/AppContainer.kt` and nowhere el
 ## Screens
 
 - `ui/lists/`: the entry point. Starts empty ("No lists yet") and shows every list, oldest first,
-  with a "New list" button.
+  with a "New list" button. Tapping a list opens it.
 - `ui/newlist/`: a name (trimmed, 1 to `MAX_LIST_NAME_LENGTH` = 40 characters) and one of 48 icons
   in a 6-wide grid; Save is enabled once the name is not blank. Back drops what was typed.
-- Navigation is `rememberSaveable` state in `ui/App.kt`.
+- `ui/list/`: one list's items, opened with its `listId`. Items still to do come first, then the
+  done ones (ticked, crossed out), each oldest first (`GetItemsUseCase`); the top bar shows "x of y
+  done". The field at the bottom stays above the keyboard; Enter or + adds the item (trimmed, up to
+  `MAX_ITEM_TEXT_LENGTH` = 200) and keeps the keyboard up for the next one. × deletes an item, with
+  no undo. `ListViewModel` is kept per list id for the session.
+- Navigation is `rememberSaveable` state in `ui/App.kt`: whether the new list form is open, and
+  the open list id.
 - Colours live in `ui/theme/Theme.kt` (teal, coral accent, light and dark); the window background
   in `androidMain/res/values{,-night}/colors.xml` matches each scheme's `background`.
 - Strings are in `composeResources/values/strings.xml`, English only for now.
@@ -35,9 +41,13 @@ resources. Dependencies are wired by hand in `di/AppContainer.kt` and nowhere el
 - `ListIcon` is the 48 icons, in picker order. It is saved by name, so never rename an entry; an
   unknown name reads as `TODO`. The emoji and screen-reader label of each live only in
   `ui/icons/ListIcons.kt`.
-- Lists are stored on the phone in Room (`todo.db`, table `lists`) through `data/local/RoomTodoLists`.
-  It is the only copy, so schema changes need a migration; the schema is exported to `app/schemas/`.
-- Not shared yet. Sharing means a Firestore `TodoListRepository` swapped in `AppContainer`; nothing
+- `TodoItem` is an `id` (random UUID), `listId`, `text`, `done` and `createdAt`.
+- Lists and items are stored on the phone in Room (`todo.db`, tables `lists` and `items`; deleting a
+  list deletes its items) through `data/local/RoomTodoLists` and `RoomTodoItems`. It is the only
+  copy, so every schema change needs a migration: bump the version and add an `AutoMigration` (or a
+  manual one) in `TodoDatabase`; the schemas Room needs for that are exported to `app/schemas/`,
+  which is committed.
+- Not shared yet. Sharing means Firestore `TodoListRepository` and `TodoItemRepository` implementations swapped in `AppContainer`; nothing
   above the data layer changes.
 - Firebase is set up but not used by any code yet: the `com.google.gms.google-services` plugin reads
   `app/google-services.json` (gitignored, so every checkout needs its own copy), and Firestore and

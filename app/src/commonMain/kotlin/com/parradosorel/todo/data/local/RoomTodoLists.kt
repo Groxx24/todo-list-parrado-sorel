@@ -8,5 +8,7 @@ import kotlinx.coroutines.flow.map
 class RoomTodoLists(private val dao: TodoListDao) : TodoListRepository {
     override fun lists(): Flow<List<TodoList>> = dao.lists().map { lists -> lists.map { it.toDomain() } }
 
+    override fun list(id: String): Flow<TodoList?> = dao.list(id).map { it?.toDomain() }
+
     override suspend fun add(list: TodoList) = dao.insert(list.toEntity())
 }

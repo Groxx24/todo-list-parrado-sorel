@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-// Material's arrow_back and add, drawn here so the app does not need the icons library for two icons.
+// Material's arrow_back, add and close, drawn here so the app does not need the icons library for three icons.
 
 val BackArrow: ImageVector = materialIcon("BackArrow") {
     moveTo(20f, 11f)
@@ -34,6 +34,22 @@ val Plus: ImageVector = materialIcon("Plus") {
     horizontalLineToRelative(2f)
     verticalLineToRelative(6f)
     horizontalLineToRelative(6f)
+    close()
+}
+
+val Close: ImageVector = materialIcon("Close") {
+    moveTo(19f, 6.41f)
+    lineTo(17.59f, 5f)
+    lineTo(12f, 10.59f)
+    lineTo(6.41f, 5f)
+    lineTo(5f, 6.41f)
+    lineTo(10.59f, 12f)
+    lineTo(5f, 17.59f)
+    lineTo(6.41f, 19f)
+    lineTo(12f, 13.41f)
+    lineTo(17.59f, 19f)
+    lineTo(19f, 17.59f)
+    lineTo(13.41f, 12f)
     close()
 }
 
